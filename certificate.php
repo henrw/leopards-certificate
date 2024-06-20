@@ -80,7 +80,7 @@ function pdfprint($certificate_id, $name, $coursename, $date)
 
 
 	// Add a background image inside the rectangle
-	$pdf->Image('cmu-bg2.png', 4, 4, 289, 202);
+	$pdf->Image('assets/cmu-bg2.png', 4, 4, 289, 202);
 
 
 	// Draw a border
@@ -121,13 +121,13 @@ function pdfprint($certificate_id, $name, $coursename, $date)
 
 	$pdf->setXY(20, 140);
 	$pdf->MultiCell(75, 5, "Ken Koedinger, Hillman Professor of Computer Science and Human-Computer Interaction", "T", "C");
-	$pdf->Image("kk_sig.png", 30, 128, 50);
+	$pdf->Image("assets/kk_sig.png", 30, 128, 50);
 
-	$pdf->Image("mb_sig.png", 120, 130, 50);
+	$pdf->Image("assets/mb_sig.png", 120, 130, 50);
 	$pdf->setXY(110, 140);
 	$pdf->MultiCell(75, 5, "Michael Bett, LearnLab Managing Director", "T", "C");
 
-	$pdf->Image("nb_sig.png", 210, 128, 50);
+	$pdf->Image("assets/nb_sig.png", 210, 128, 50);
 	$pdf->setXY(200, 140);
 	$pdf->MultiCell(75, 5, "Norman Bier, Director, Open Learning Initiative & Director, Simon Initiative", "T", "C");
 
@@ -153,7 +153,7 @@ function pdfprint($certificate_id, $name, $coursename, $date)
 // Get the cetificate id from the url
 //
 $certificate_id = $_GET["certificate_id"];
-
+$name = $_POST['name'];
 
 // Lookup the certificate in the database
 //
@@ -162,22 +162,25 @@ $certificate_id = $_GET["certificate_id"];
 // $select_sql = "SELECT * FROM wp_certificates WHERE certificate_id=" . "'" . $certificate_id . "'";
 
 
-$db = new dbObj();
-$connString =  $db->getConnstring();
-// $display_heading = array('id' => 'ID', 'employee_name' => 'Name', 'employee_age' => 'Age', 'employee_salary' => 'Salary',);
-$query = "SELECT name, completion FROM learners WHERE name = 'Henry'";
-$result = mysqli_query($connString, $query) or die("database error:" . mysqli_error($connString));
+$connString = (new dbObj())->getConnstring();
+$stmt = $connString->prepare("SELECT name, completion FROM learners WHERE name = ?");
+$stmt->bind_param("s", $name);
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Fetch the result into an associative array
-if ($row = mysqli_fetch_assoc($result)) {
-    pdfprint("test id", $row['name'], "A FAKE COURSE!!!", "2/30/2025");
+if ($result->num_rows > 0) {
+	// If the name exists in the database, generate and print the certificate
+	$row = $result->fetch_assoc();
+	pdfprint("test id", $row['name'], "A FAKE COURSE!!!", "2/30/2025");
 } else {
-    echo "No record found for Henry.";
+	// If the name does not exist, display an error message
+	echo "No record found for the requested name.";
+	http_response_code(404);
 }
 
-// // Don't forget to free the result and close the connection
-// mysqli_free_result($result);
-// mysqli_close($connString);
+// Don't forget to free the result and close the connection
+mysqli_free_result($result);
+mysqli_close($connString);
 
 
 // // Connect to the database
