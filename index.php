@@ -23,6 +23,7 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     // If the name exists in the database, display the page
     $row = $result->fetch_assoc();
+    // $courses = file("/var/external_includes/course-names.txt", FILE_IGNORE_NEW_LINES);
 ?>
     <meta charset="UTF-8">
     <title>Fake Certificate</title>
