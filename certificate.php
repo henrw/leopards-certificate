@@ -150,33 +150,65 @@ function pdfprint($certificate_id, $name, $coursename, $date)
 	$pdf->Output("/var/www/html/learnlab/certificates/report.pdf", "I");
 }
 
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Get the cetificate id from the url
 //
-$certificate_id = $_GET["certificate_id"];
-$name = $_POST['name'];
+// $certificate_id = $_GET["certificate_id"];
+// Get learner_id and course_id from POST request
+$learner_id = isset($_POST['learner_id']) ? $_POST['learner_id'] : null;
+$course_id = isset($_POST['course_id']) ? $_POST['course_id'] : null;
 
-// Lookup the certificate in the database
-//
+// Define the SQL query to check completion and fetch course details
 
 // Define the SQL query
 // $select_sql = "SELECT * FROM wp_certificates WHERE certificate_id=" . "'" . $certificate_id . "'";
 
 
 $connString = (new dbObj())->getConnstring();
-$stmt = $connString->prepare("SELECT name, completion FROM learners WHERE name = ?");
-$stmt->bind_param("s", $name);
-$stmt->execute();
+if (!$connString) {
+	die("Database connection failed: " . mysqli_connect_error());
+}
+$stmt = $connString->prepare("
+	SELECT l.name AS learner_name, c.name AS course_name, cp.completion_date
+	FROM learners l
+	JOIN completion cp ON l.id = cp.learner_id
+	JOIN courses c ON c.id = cp.course_id
+	WHERE l.id = ? AND c.id = ?
+");
+
+if (!$stmt) {
+	die("Prepare failed: " . $connString->error);
+}
+
+// Bind parameters to the query
+$stmt->bind_param("ii", $learner_id, $course_id);
+if (!$stmt->execute()) {
+	die("Execution failed: " . $stmt->error);
+}
 $result = $stmt->get_result();
+if (!$result) {
+	die("Fetching result failed: " . $stmt->error);
+}
+
 
 if ($result->num_rows > 0) {
-	// If the name exists in the database, generate and print the certificate
+	// If the learner has completed the course, fetch details and generate the certificate
 	$row = $result->fetch_assoc();
-	pdfprint("test id", $row['name'], "A FAKE COURSE!!!", "2/30/2025");
+	$learner_name = $row['learner_name'];
+	$course_name = $row['course_name'];
+	$completion_date = $row['completion_date'];
+
+	// Assuming pdfprint function exists and is ready to generate PDF certificates
+	pdfprint("Certificate ID", $learner_name, $course_name, $completion_date); // Please check the date and adjust accordingly
+	echo "Certificate generated successfully.";
 } else {
-	// If the name does not exist, display an error message
-	echo "No record found for the requested name.";
+	// If the learner has not completed the course or no record exists, display an error
+	echo "No completion record found for the requested course and learner.";
 	http_response_code(404);
-}
+};
 
 // Don't forget to free the result and close the connection
 mysqli_free_result($result);
