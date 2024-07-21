@@ -1,6 +1,7 @@
 CREATE TABLE learners (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name TEXT
+    name TEXT,
+    email TEXT
 );
 
 CREATE TABLE courses (
@@ -11,18 +12,14 @@ CREATE TABLE courses (
 CREATE TABLE completion (
     learner_id INT,
     course_id INT,
+    certificate_id TEXT,
     completion_date DATE NOT NULL DEFAULT CURDATE(),
     FOREIGN KEY (learner_id) REFERENCES learners(id),
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
 -- Insert learners
-INSERT INTO learners (name) VALUES ('Henry');
-INSERT INTO learners (name) VALUES ('Monica');
-INSERT INTO learners (name) VALUES ('Yvette');
-INSERT INTO learners (name) VALUES ('Della');
-INSERT INTO learners (name) VALUES ('Tracy');
-INSERT INTO learners (name) VALUES ('Cody');
+INSERT INTO learners (name, email) VALUES ('Henry', 'muzhewu@gmail.com');
 
 -- Insert courses
 INSERT INTO courses (name) VALUES ('Adaptation, Crowdsourcing, and Persuasion');
@@ -39,4 +36,4 @@ INSERT INTO courses (name) VALUES ('Uncovering Implicit Knowledge with Cognitive
 INSERT INTO courses (name) VALUES ('UX Design for Effective Instruction');
 
 -- Example insert into completion
-INSERT INTO completion (learner_id, course_id) VALUES (1, 1);
+INSERT INTO completion (learner_id, course_id, certificate_id) VALUES (1, 1, "test");
