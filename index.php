@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $courseName = $_POST["course_name"];
         }
     } else if (isset($_POST["send_email"])) {
+        echo $_POST['key'];
         $params = [
             'learnerId' => $_POST['learner_id'],
             'courseId' => $_POST['course_id'],
@@ -70,9 +71,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
         $to = htmlspecialchars($_POST['email']);
         $course_name = $_POST['course_name'];
+        $learner_name = $_POST['learner_name'];
         $subject = "Congratulations on completing " . $course_name;
         $certificateUrl = "http://localhost/certificate/?" . http_build_query($params);
-        $linkedInUrl = "https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=<?php echo urlencode($course_name); ?>&organizationId=10000&issueYear=2023&issueMonth=11&expirationYear=2026&expirationMonth=11&certUrl='https://www.yourdomain.com/'&certId=12345";
+        $paramsLinkedIn = [
+            'startTask' => 'CERTIFICATION_NAME',
+            'name' => $course_name,
+            'organizationId' => 10000,
+            'issueYear' => 2024,
+            'issueMonth' => 7,
+            'expirationYear' => 2026,
+            'expirationMonth' => 7,
+            'certUrl' => 'https://www.yourdomain.com/',
+            'certId' => 12345
+        ];
+        $linkedInUrl = "https://www.linkedin.com/profile/add?" . http_build_query($paramsLinkedIn);
         $message = <<<EOD
         <!DOCTYPE html>
         <html>
@@ -89,8 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h1>Congratulations on Completing the Course!</h1>
             </div>
             <div class="content">
-                <p>Hi $learnerName,</p>
-                <p>Great job on completing the course: $courseName</p>
+                <p>Hi $learner_name,</p>
+                <p>Great job on completing the course: $course_name</p>
                 <p>Please view your certificate at <a href='$certificateUrl'>View Certificate</a></p>
                 <p>You can also share this on LinkedIn by clicking this <a href='$linkedInUrl'>link</a></p>
                 <p>Keep up the good work!</p>
