@@ -18,6 +18,15 @@ CREATE TABLE completion (
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
+CREATE TABLE email_history (
+    learner_id INT,
+    course_id INT,
+    email_text INT,
+    email_date DATE NOT NULL DEFAULT CURDATE(),
+    FOREIGN KEY (learner_id) REFERENCES learners(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+
 -- Insert learners
 INSERT INTO learners (name, email) VALUES ('Henry', 'muzhewu@gmail.com');
 

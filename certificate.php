@@ -160,6 +160,7 @@ error_reporting(E_ALL);
 // Get learner_id and course_id from POST request
 $learner_id = isset($_POST['learner_id']) ? $_POST['learner_id'] : null;
 $course_id = isset($_POST['course_id']) ? $_POST['course_id'] : null;
+$key = isset($_POST['key']) ? $_POST['key'] : null;
 
 // Define the SQL query to check completion and fetch course details
 
@@ -172,19 +173,19 @@ if (!$connString) {
 	die("Database connection failed: " . mysqli_connect_error());
 }
 $stmt = $connString->prepare("
-	SELECT l.name AS learner_name, c.name AS course_name, cp.completion_date
-	FROM learners l
-	JOIN completion cp ON l.id = cp.learner_id
-	JOIN courses c ON c.id = cp.course_id
-	WHERE l.id = ? AND c.id = ?
+    SELECT l.name AS learner_name, c.name AS course_name, cp.completion_date
+    FROM learners l
+    JOIN completion cp ON l.id = cp.learner_id
+    JOIN courses c ON c.id = cp.course_id
+    WHERE l.id = ? AND c.id = ? AND cp.certificate_id = ?
 ");
 
 if (!$stmt) {
-	die("Prepare failed: " . $connString->error);
+    die("Prepare failed: " . $connString->error);
 }
 
 // Bind parameters to the query
-$stmt->bind_param("ii", $learner_id, $course_id);
+$stmt->bind_param("iis", $learner_id, $course_id, $key);
 if (!$stmt->execute()) {
 	die("Execution failed: " . $stmt->error);
 }
