@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $course_name = $_POST['course_name'];
         $learner_name = $_POST['learner_name'];
         $subject = "Congratulations on completing " . $course_name;
-        $certificateUrl = "http://" . $ip . "/certificate/?" . http_build_query($params);
+        $certificateUrl = "http://" . $ip . "/certificate/certificate.php?" . http_build_query($params);
         $paramsLinkedIn = [
             'startTask' => 'CERTIFICATION_NAME',
             'name' => $course_name,
@@ -102,9 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="content">
                 <p>Hi $learner_name,</p>
-                <p>Great job on completing the course: $course_name</p>
-                <p>Please view your certificate at <a href='$certificateUrl'>View Certificate</a></p>
-                <p>You can also share this on LinkedIn by clicking this <a href='$linkedInUrl'>link</a></p>
+                <p>Great job on completing the course: $course_name.</p>
+                <p>Please <a href='$certificateUrl'>view your certificate</a>.</p>
+                <p>You can also share this on LinkedIn by clicking this <a href='$linkedInUrl'>link</a>.</p>
                 <p>Keep up the good work!</p>
             </div>
             <div class="footer">
