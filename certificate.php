@@ -158,9 +158,9 @@ error_reporting(E_ALL);
 //
 // $certificate_id = $_GET["certificate_id"];
 // Get learner_id and course_id from POST request
-$learner_id = isset($_POST['learner_id']) ? $_POST['learner_id'] : null;
-$course_id = isset($_POST['course_id']) ? $_POST['course_id'] : null;
-$key = isset($_POST['key']) ? $_POST['key'] : null;
+$learner_id = isset($_REQUEST['learner_id']) ? $_REQUEST['learner_id'] : null;
+$course_id = isset($_REQUEST['course_id']) ? $_REQUEST['course_id'] : null;
+$key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
 
 // Define the SQL query to check completion and fetch course details
 

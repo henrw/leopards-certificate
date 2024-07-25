@@ -63,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $courseName = $_POST["course_name"];
         }
     } else if (isset($_POST["send_email"])) {
-        echo $_POST['key'];
         $params = [
             'learnerId' => $_POST['learner_id'],
             'courseId' => $_POST['course_id'],
@@ -73,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $course_name = $_POST['course_name'];
         $learner_name = $_POST['learner_name'];
         $subject = "Congratulations on completing " . $course_name;
-        $certificateUrl = "http://localhost/certificate/?" . http_build_query($params);
+        $certificateUrl = "http://" . $ip . "/certificate/?" . http_build_query($params);
         $paramsLinkedIn = [
             'startTask' => 'CERTIFICATION_NAME',
             'name' => $course_name,
