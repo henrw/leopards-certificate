@@ -104,10 +104,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $from = $myEmail; // This should be the same as your msmtp configuration
 
-        $headers = "From: $from\r\n" .
-                "Reply-To: $from\r\n" .
-                "X-Mailer: PHP/" . phpversion() .
-                "Content-type: text/html; charset=UTF-8\r\n";
+        $headers = "MIME-Version: 1.0\r\n" . // Add this line
+                    "Content-type: text/html; charset=UTF-8\r\n" . // Ensure this line is correct
+                    "From: $from\r\n" .
+                    "Reply-To: $from\r\n" .
+                    "X-Mailer: PHP/" . phpversion() . "\r\n";
 
         // Attempt to send the email
         if (mail($to, $subject, $message, $headers)) {
