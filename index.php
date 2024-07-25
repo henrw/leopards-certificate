@@ -63,11 +63,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $courseName = $_POST["course_name"];
         }
     } else if (isset($_POST["send_email"])) {
+        $params = [
+            'learnerId' => $_POST['learner_id'],
+            'courseId' => $_POST['course_id'],
+            'key' => $_POST['key']
+        ];
         $to = htmlspecialchars($_POST['email']);
         $course_name = $_POST['course_name'];
         $subject = "Congratulations on completing " . $course_name;
-        $certificateUrl = "http://localhost/certificate/?learnerId=" . urlencode($_POST['learner_id']) .
-            "&courseId=" . urlencode($_POST['course_id']) . "&key=" . urlencode($_POST['key']);
+        $certificateUrl = "http://localhost/certificate/?" . http_build_query($params);
         $linkedInUrl = "https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=<?php echo urlencode($course_name); ?>&organizationId=10000&issueYear=2023&issueMonth=11&expirationYear=2026&expirationMonth=11&certUrl='https://www.yourdomain.com/'&certId=12345";
         $message = <<<EOD
         <!DOCTYPE html>
@@ -401,6 +405,7 @@ if ($learnerId == 0 && $courseId == 0) {
                                                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                                                 <input type="hidden" name="course_name" value="<?php echo $course['name']; ?>">
                                                 <input type="hidden" name="learner_name" value="<?php echo $learnerName; ?>">
+                                                <input type="hidden" name="learner_id" value="<?php echo $learnerId; ?>">
                                                 <input type="hidden" name="key" value="<?php echo $filteredCourses[0]["certificate_id"]; ?>">
                                                 <input type="hidden" name="email" value="<?php echo $learnerRow["email"]; ?>">
                                                 <button type="submit" class="btn btn-dark btn-sm" title="Send Email" name="send_email"><i class="bi bi-envelope"></i></button>
@@ -523,6 +528,7 @@ if ($learnerId == 0 && $courseId == 0) {
                                                 <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
                                                 <input type="hidden" name="course_name" value="<?php echo $courseName; ?>">
                                                 <input type="hidden" name="learner_name" value="<?php echo $learner['name']; ?>">
+                                                <input type="hidden" name="learner_id" value="<?php echo $learner['id']; ?>">
                                                 <input type="hidden" name="key" value="<?php echo $filteredLearners[0]["certificate_id"]; ?>">
                                                 <input type="hidden" name="email" value="<?php echo $learner["email"]; ?>">
                                                 <button type="submit" class="btn btn-dark btn-sm" title="Send Email" name="send_email"><i class="bi bi-envelope"></i></button>
