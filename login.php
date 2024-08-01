@@ -26,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        if (password_verify($password, $row['password'])) {
+        if ($password == $row['password']) {
             $_SESSION['username'] = $username;
             echo "Login successful!";
-            header('Location: dashboard.php'); // Redirect to a protected page
+            header('Location: index.php'); // Redirect to a protected page
         } else {
             echo "Invalid password.";
         }
