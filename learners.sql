@@ -27,6 +27,11 @@ CREATE TABLE email_history (
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
+CREATE TABLE admins (
+    username TEXT,
+    password TEXT
+);
+
 -- Insert learners
 INSERT INTO learners (name, email) VALUES ('Henry', 'muzhewu@gmail.com');
 
@@ -43,6 +48,3 @@ INSERT INTO courses (name) VALUES ('Quantitative and Experimental Methods for De
 INSERT INTO courses (name) VALUES ('Techniques for Active Enriched Learning');
 INSERT INTO courses (name) VALUES ('Uncovering Implicit Knowledge with Cognitive Task Analysis');
 INSERT INTO courses (name) VALUES ('UX Design for Effective Instruction');
-
--- Example insert into completion
-INSERT INTO completion (learner_id, course_id, certificate_id) VALUES (1, 1, "test");

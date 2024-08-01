@@ -5,8 +5,8 @@ include_once("connection.php");
 require("utils.php");
 require("secrets.php");
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
 $conn = (new dbObj())->getConnstring();
 
 // Check database connection
@@ -14,11 +14,55 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Session start
+session_start();
+
+// Function to handle user login
+function login($username, $password) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT * FROM admins WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $user['username'];
+            return true;
+        }
+    }
+    return false;
+}
+
+// Function to check if user is logged in
+function isLoggedIn() {
+    return isset($_SESSION['username']);
+}
+
+
 $learnerId = 0;
 $courseId = 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Handle login form submission
+    if (isset($_POST['login'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        if (login($username, $password)) {
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $error = "Invalid login credentials.";
+        }
+    }
+    // Handle other form submissions...
 
+    // Handle logout
+    if (isset($_POST['logout'])) {
+        session_destroy();
+        header("Location: index.php");
+        exit;
+    }
     if (isset($_POST["add_learner"])) {
         $name = $_POST['name'];
         $email = $_POST['email'];
@@ -132,6 +176,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $learnerId = 0;
         $courseId = 0;
     }
+}
+
+if (!isLoggedIn()) {
+    header("Location: login.php");
+    exit;
 }
 
 $allLearners = getAllLearners($conn);
