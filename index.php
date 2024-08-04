@@ -108,8 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else if (isset($_POST["send_email"])) {
         $params = [
-            'learnerId' => $_POST['learner_id'],
-            'courseId' => $_POST['course_id'],
+            'learner_id' => $_POST['learner_id'],
+            'course_id' => $_POST['course_id'],
             'key' => $_POST['key']
         ];
         $to = htmlspecialchars($_POST['email']);
